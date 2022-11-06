@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DirectoryAce.Data;
 using DirectoryAce.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DirectoryAce.Controllers
 {
@@ -20,6 +21,7 @@ namespace DirectoryAce.Controllers
         }
 
         // GET: Contacts
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Contacts.Include(c => c.AppUser);
@@ -27,6 +29,7 @@ namespace DirectoryAce.Controllers
         }
 
         // GET: Contacts/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Contacts == null)
@@ -46,6 +49,7 @@ namespace DirectoryAce.Controllers
         }
 
         // GET: Contacts/Create
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id");
@@ -57,6 +61,7 @@ namespace DirectoryAce.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,AppUserId,FirstName,LastName,BirthDate,Address1,Address2,City,Region,ZipCode,Email,PhoneNumber,Created,ImageData,ImageType")] Contact contact)
         {
             if (ModelState.IsValid)
@@ -70,6 +75,7 @@ namespace DirectoryAce.Controllers
         }
 
         // GET: Contacts/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Contacts == null)
@@ -91,6 +97,7 @@ namespace DirectoryAce.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,AppUserId,FirstName,LastName,BirthDate,Address1,Address2,City,Region,ZipCode,Email,PhoneNumber,Created,ImageData,ImageType")] Contact contact)
         {
             if (id != contact.Id)
@@ -123,6 +130,7 @@ namespace DirectoryAce.Controllers
         }
 
         // GET: Contacts/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Contacts == null)
@@ -144,6 +152,7 @@ namespace DirectoryAce.Controllers
         // POST: Contacts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Contacts == null)
