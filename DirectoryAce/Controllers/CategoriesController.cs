@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DirectoryAce.Data;
 using DirectoryAce.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DirectoryAce.Controllers
 {
@@ -20,6 +21,7 @@ namespace DirectoryAce.Controllers
         }
 
         // GET: Categories
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Categories.Include(c => c.AppUser);
@@ -27,6 +29,7 @@ namespace DirectoryAce.Controllers
         }
 
         // GET: Categories/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Categories == null)
@@ -46,6 +49,7 @@ namespace DirectoryAce.Controllers
         }
 
         // GET: Categories/Create
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id");
@@ -57,6 +61,7 @@ namespace DirectoryAce.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,AppUserId,Name")] Category category)
         {
             if (ModelState.IsValid)
@@ -70,6 +75,7 @@ namespace DirectoryAce.Controllers
         }
 
         // GET: Categories/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Categories == null)
@@ -91,6 +97,7 @@ namespace DirectoryAce.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,AppUserId,Name")] Category category)
         {
             if (id != category.Id)
@@ -123,6 +130,7 @@ namespace DirectoryAce.Controllers
         }
 
         // GET: Categories/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Categories == null)
@@ -144,6 +152,7 @@ namespace DirectoryAce.Controllers
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Categories == null)
