@@ -20,14 +20,17 @@ namespace DirectoryAce.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
         private readonly IImageService _imageService;
+        private readonly IAddressBookService _addressBookService;
 
         public ContactsController(ApplicationDbContext context, 
                                     UserManager<AppUser> userManager,
-                                    IImageService imageService)
+                                    IImageService imageService,
+                                    IAddressBookService addressBookService)
         {
             _context = context;
             _userManager = userManager;
             _imageService = imageService;
+            _addressBookService = addressBookService;
         }
 
         // GET: Contacts
@@ -60,10 +63,11 @@ namespace DirectoryAce.Controllers
 
         // GET: Contacts/Create
         [Authorize]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id");
+            string appUserId = _userManager.GetUserId(User);
             ViewData["RegionsList"] = new SelectList(Enum.GetValues(typeof(Regions)).Cast<Regions>().ToList());
+            ViewData["CategoryList"] = new MultiSelectList(await _addressBookService.GetUserCategoriesAsync(appUserId), "Id", "Name");
 
             return View();
         }
