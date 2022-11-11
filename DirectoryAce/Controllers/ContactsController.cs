@@ -35,7 +35,7 @@ namespace DirectoryAce.Controllers
 
         // GET: Contacts
         [Authorize]
-        public async Task<IActionResult> Index()
+        public IActionResult Index(int categoryId)
         {
             List<Contact> contacts = new List<Contact>();
             string appUserId = _userManager.GetUserId(User);
@@ -46,10 +46,24 @@ namespace DirectoryAce.Controllers
                                             .FirstOrDefault(u => u.Id == appUserId)!;
 
             var categories = appUser.Categories;
-            contacts = appUser.Contacts.OrderBy(c => c.LastName)
-                                        .ThenBy(c => c.FirstName).ToList();
+
+            // id 0 represents all categories so display all users
+            if (categoryId == 0)
+            {
+                //ordering the appearance of contacts
+                contacts = appUser.Contacts.OrderBy(c => c.FirstName)
+                                            .ThenBy(c => c.LastName).ToList();
+            }
+            else
+            {
+                contacts = appUser.Categories.FirstOrDefault(c => c.Id == categoryId)!
+                                    .Contacts.OrderBy(c => c.FirstName)
+                                              .ThenBy(c => c.LastName).ToList();
+            }
+
             
-            ViewData["CategoryId"] = new SelectList(categories, "Id", "Name");
+            
+            ViewData["CategoryId"] = new SelectList(categories, "Id", "Name", categoryId);
 
             return View(contacts);
         }
