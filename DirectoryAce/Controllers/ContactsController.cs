@@ -60,12 +60,39 @@ namespace DirectoryAce.Controllers
                                     .Contacts.OrderBy(c => c.FirstName)
                                               .ThenBy(c => c.LastName).ToList();
             }
-
-            
             
             ViewData["CategoryId"] = new SelectList(categories, "Id", "Name", categoryId);
 
             return View(contacts);
+        }
+
+        [Authorize]
+        public IActionResult SearchContacts(string searchString)
+        {
+            string appUserId = _userManager.GetUserId(User);
+            var contacts = new List<Contact>();
+
+            AppUser appUser = _context.Users.Include(c => c.Contacts)
+                                .ThenInclude(c => c.Categories)
+                                .FirstOrDefault(u => u.Id == appUserId)!;
+
+            // ie. if we are searching for all contacts
+            if (String.IsNullOrEmpty(searchString))
+            {
+                contacts = appUser.Contacts.OrderBy(c => c.FirstName)
+                                            .ThenBy(c => c.LastName).ToList();
+            }
+            else
+            {
+                contacts = appUser.Contacts
+                    .Where(c => c.FullName!.ToLower().Contains(searchString.ToLower()))
+                    .OrderBy(c => c.FirstName)
+                    .ThenBy(c => c.LastName).ToList();
+            }
+
+            ViewData["CategoyId"] = new SelectList(appUser.Categories, "Id", "Name", 0);
+
+            return View(nameof(Index), contacts);
         }
 
         // GET: Contacts/Details/5
