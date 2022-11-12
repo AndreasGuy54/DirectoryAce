@@ -189,7 +189,8 @@ namespace DirectoryAce.Controllers
             }
 
             ViewData["RegionsList"] = new SelectList(Enum.GetValues(typeof(Regions)).Cast<Regions>().ToList());
-            ViewData["CategoryList"] = new MultiSelectList(await _addressBookService.GetUserCategoriesAsync(appUserId), "Id", "Name");
+            ViewData["CategoryList"] = new MultiSelectList(await _addressBookService.GetUserCategoriesAsync(appUserId), 
+                                        "Id", "Name", await _addressBookService.GetContactCategoryIdsAsync(contact.Id));
             
             return View(contact);
         }
