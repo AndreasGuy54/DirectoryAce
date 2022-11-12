@@ -7,7 +7,7 @@
     ViewData["Title"] = "Edit Contact";
 }
 
-<h1>@Model.FullName</h1>
+<h1>Edit <span style="color:dodgerblue">@Model.FullName</span></h1>
 
 <div class="p-3 border border-2 shadow-lg bg-light">
     <form asp-action="Edit" asp-controller="Contacts" enctype="multipart/form-data">
