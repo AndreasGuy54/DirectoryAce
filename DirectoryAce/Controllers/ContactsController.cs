@@ -13,6 +13,8 @@ using DirectoryAce.Enums;
 using Microsoft.AspNetCore.Identity;
 using DirectoryAce.Services.Interfaces;
 using DirectoryAce.Models.ViewModels;
+using DirectoryAce.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace DirectoryAce.Controllers
 {
@@ -22,16 +24,19 @@ namespace DirectoryAce.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IImageService _imageService;
         private readonly IAddressBookService _addressBookService;
+        private readonly IEmailSender _emailService;
 
         public ContactsController(ApplicationDbContext context, 
                                     UserManager<AppUser> userManager,
                                     IImageService imageService,
-                                    IAddressBookService addressBookService)
+                                    IAddressBookService addressBookService,
+                                    IEmailSender emailService)
         {
             _context = context;
             _userManager = userManager;
             _imageService = imageService;
             _addressBookService = addressBookService;
+            _emailService = emailService;
         }
 
         // GET: Contacts
@@ -123,6 +128,27 @@ namespace DirectoryAce.Controllers
 
             return View(model);
         }
+
+        // POST: Contacts/EmailContact
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> EmailContact(EmailContactViewModel ecvm)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _emailService.SendEmailAsync(ecvm.EmailData.EmailAddress, ecvm.EmailData.Subject, ecvm.EmailData.Body);
+                    return RedirectToAction("Index", "Contacts");
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+            return View(ecvm);
+        }
+
 
         // GET: Contacts/Details/5
         [Authorize]
