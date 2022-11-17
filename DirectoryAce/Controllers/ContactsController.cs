@@ -12,6 +12,7 @@ using System.Runtime.Serialization;
 using DirectoryAce.Enums;
 using Microsoft.AspNetCore.Identity;
 using DirectoryAce.Services.Interfaces;
+using DirectoryAce.Models.ViewModels;
 
 namespace DirectoryAce.Controllers
 {
@@ -97,9 +98,30 @@ namespace DirectoryAce.Controllers
 
         // GET: Contacts/EmailContact
         [Authorize]
-        public IActionResult EmailContact(int contactId)
+        public async Task<IActionResult> EmailContact(int contactId)
         {
-            return View();
+            string appUserId = _userManager.GetUserId(User);
+            Contact contact = await _context.Contacts.Where(c => c.Id == contactId && c.AppUserId == appUserId)
+                                                    .FirstOrDefaultAsync();
+            if (contact == null)
+            {
+                return NotFound();
+            }
+
+            EmailData emailData = new EmailData()
+            {
+                EmailAddress = contact.Email,
+                FirstName = contact.FirstName,
+                LastName = contact.LastName
+            };
+
+            EmailContactViewModel model = new EmailContactViewModel()
+            {
+                Contact = contact,
+                EmailData = emailData
+            };
+
+            return View(model);
         }
 
         // GET: Contacts/Details/5
