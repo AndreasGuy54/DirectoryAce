@@ -41,8 +41,10 @@ namespace DirectoryAce.Controllers
 
         // GET: Contacts
         [Authorize]
-        public IActionResult Index(int categoryId)
+        public IActionResult Index(int categoryId, string swalMessage = null)
         {
+            ViewData["SwalMessage"] = swalMessage;
+
             List<Contact> contacts = new List<Contact>();
             string appUserId = _userManager.GetUserId(User);
 
@@ -139,10 +141,11 @@ namespace DirectoryAce.Controllers
                 try
                 {
                     await _emailService.SendEmailAsync(ecvm.EmailData.EmailAddress, ecvm.EmailData.Subject, ecvm.EmailData.Body);
-                    return RedirectToAction("Index", "Contacts");
+                    return RedirectToAction("Index", "Contacts", new { swalMessage = "Success: Email Sent!" } );
                 }
                 catch (Exception)
                 {
+                    return RedirectToAction("Index", "Contacts", new { swalMessage = "Error: Email Sent Failed!" });
                     throw;
                 }
             }
