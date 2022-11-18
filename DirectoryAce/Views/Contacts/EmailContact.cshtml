@@ -4,7 +4,7 @@
     ViewData["Title"] = "Email Contact";
 }
 
-<h1>Email @Model.Contact!.FullName</h1>
+<h1>Email <span style="color:dodgerblue">@Model.Contact!.FullName</span></h1>
 
 <div class="p-2">
     <form asp-action="EmailContact" asp-controller="Contacts" method="post">
