@@ -111,6 +111,7 @@ namespace DirectoryAce.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,AppUserId,Name")] Category category)
         {
+
             if (id != category.Id)
             {
                 return NotFound();
@@ -120,6 +121,8 @@ namespace DirectoryAce.Controllers
             {
                 try
                 {
+                    string appUserId = _userManager.GetUserId(User);
+                    category.AppUserId = appUserId;
                     _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
@@ -136,7 +139,6 @@ namespace DirectoryAce.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "Id", category.AppUserId);
             return View(category);
         }
 
